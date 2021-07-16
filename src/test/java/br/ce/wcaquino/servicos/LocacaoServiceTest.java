@@ -13,6 +13,7 @@ import org.junit.rules.ErrorCollector;
 import org.junit.rules.ExpectedException;
 
 import br.ce.wcaquinho.exceptions.FilmesSemEstoqueException;
+import br.ce.wcaquinho.exceptions.LocadoraException;
 import br.ce.wcaquino.entidades.Filme;
 import br.ce.wcaquino.entidades.Locacao;
 import br.ce.wcaquino.entidades.Usuario;
@@ -44,7 +45,7 @@ public class LocacaoServiceTest {
 	}
 	
 	@Test(expected=FilmesSemEstoqueException.class) // maneira elegante onde se declara que a exceção é espera no @Test(...)
-	public void testeLocacao_filmeSemEstoque() throws Exception {
+	public void testeLocacao_FilmeSemEstoque() throws Exception {
 		//cenario
 		LocacaoService service = new LocacaoService();
 		Usuario usuario = new Usuario("User 1");
@@ -52,5 +53,38 @@ public class LocacaoServiceTest {
 
 		//acao
 		service.alugarFilme(usuario, filme);
+	}
+	
+	@Test
+	public void testLocacao_UsuarioVazio() throws FilmesSemEstoqueException {
+		//cenario
+		LocacaoService service = new LocacaoService();
+		Filme filme = new Filme("Filme 1", 2, 5.0);
+		
+		try {
+			// acao
+			service.alugarFilme(null, filme);
+			//verificação
+			Assert.fail();
+		} catch (LocadoraException e) {
+			//verificação
+			Assert.assertThat(e.getMessage(), is("Usuario vazio"));
+		}
+
+	}
+	
+	@Test
+	public void testLocacao_FilmeVazio() throws FilmesSemEstoqueException, LocadoraException {
+		//cenario
+		LocacaoService service = new LocacaoService();
+		Usuario usuario = new Usuario("User 1");
+		Filme filme = new Filme("Filme 1", 2, 5.0);
+		
+		//verificação
+		expect.expect(LocadoraException.class);
+		expect.expectMessage("Filme vazio");
+		
+		// acao
+		service.alugarFilme(usuario, null);
 	}
 }
