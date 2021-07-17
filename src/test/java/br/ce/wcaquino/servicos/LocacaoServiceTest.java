@@ -18,20 +18,31 @@ import br.ce.wcaquino.entidades.Filme;
 import br.ce.wcaquino.entidades.Locacao;
 import br.ce.wcaquino.entidades.Usuario;
 import br.ce.wcaquino.utils.DataUtils;
+
+import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Assert;
+import org.junit.Before;
+import org.junit.BeforeClass;
 
 public class LocacaoServiceTest {
 	
+	private LocacaoService service;
+
 	@Rule
 	public ErrorCollector error = new ErrorCollector();
 	
 	@Rule
 	public ExpectedException expect = ExpectedException.none();
 	
+	@Before
+	public void setup() {
+		service = new LocacaoService();
+	}
+
 	@Test
 	public void testeLocacao() throws Exception {
 		//cenario
-		LocacaoService service = new LocacaoService();
 		Usuario usuario = new Usuario("User 1");
 		Filme filme = new Filme("Filme 1", 2, 5.0);
 
@@ -43,11 +54,10 @@ public class LocacaoServiceTest {
 		error.checkThat(DataUtils.isMesmaData(locacao.getDataLocacao(), new Date()), is(true));
 		error.checkThat(DataUtils.isMesmaData(locacao.getDataRetorno(), DataUtils.obterDataComDiferencaDias(1)), is(true));
 	}
-	
+
 	@Test(expected=FilmesSemEstoqueException.class) // maneira elegante onde se declara que a exceção é espera no @Test(...)
 	public void testeLocacao_FilmeSemEstoque() throws Exception {
 		//cenario
-		LocacaoService service = new LocacaoService();
 		Usuario usuario = new Usuario("User 1");
 		Filme filme = new Filme("Filme 1", 0, 5.0);
 
@@ -58,7 +68,6 @@ public class LocacaoServiceTest {
 	@Test
 	public void testLocacao_UsuarioVazio() throws FilmesSemEstoqueException {
 		//cenario
-		LocacaoService service = new LocacaoService();
 		Filme filme = new Filme("Filme 1", 2, 5.0);
 		
 		try {
@@ -76,7 +85,6 @@ public class LocacaoServiceTest {
 	@Test
 	public void testLocacao_FilmeVazio() throws FilmesSemEstoqueException, LocadoraException {
 		//cenario
-		LocacaoService service = new LocacaoService();
 		Usuario usuario = new Usuario("User 1");
 		Filme filme = new Filme("Filme 1", 2, 5.0);
 		
